@@ -1,4 +1,5 @@
 import { useState } from "react";
+// AgriEnviroSense AI - Smart Farming Dashboard
 import Header from "@/components/Header";
 import NavigationDrawer from "@/components/NavigationDrawer";
 import Dashboard from "@/components/Dashboard";
