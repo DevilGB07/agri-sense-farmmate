@@ -7,8 +7,27 @@ import weatherImage from "@/assets/weather-dashboard.jpg";
 import soilImage from "@/assets/soil-health.jpg";
 import cropImage from "@/assets/crop-recommendations.jpg";
 import irrigationImage from "@/assets/irrigation-schedule.jpg";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchDashboardData = async () => {
+  const response = await fetch("/api/dashboard");
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+};
 
 const Dashboard = () => {
+  const { data, isLoading, error } = useQuery({ queryKey: ['dashboardData'], queryFn: fetchDashboardData });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading data</div>;
+  }
+
   return (
     <div className="p-4 space-y-6 bg-gradient-earth min-h-screen">
       <h2 className="text-2xl font-bold text-foreground mb-6">Farm Dashboard</h2>
@@ -24,9 +43,9 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Thermometer className="h-5 w-5 text-secondary" />
-                <span className="text-2xl font-bold">28°C</span>
+                <span className="text-2xl font-bold">{data.weather.temperature}</span>
               </div>
-              <Badge variant="secondary">Sunny</Badge>
+              <Badge variant="secondary">{data.weather.condition}</Badge>
             </div>
             
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -34,14 +53,14 @@ const Dashboard = () => {
                 <Droplets className="h-4 w-4 text-primary" />
                 <div>
                   <p className="text-muted-foreground">Rainfall</p>
-                  <p className="font-semibold">15mm expected</p>
+                  <p className="font-semibold">{data.weather.rainfall}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Wind className="h-4 w-4 text-primary" />
                 <div>
                   <p className="text-muted-foreground">AQI</p>
-                  <p className="font-semibold text-success">Good (42)</p>
+                  <p className="font-semibold text-success">{data.weather.aqi}</p>
                 </div>
               </div>
             </div>
@@ -58,21 +77,21 @@ const Dashboard = () => {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>Moisture Level</span>
-                <span className="font-semibold">68%</span>
+                <span className="font-semibold">{data.soilHealth.moisture}%</span>
               </div>
-              <Progress value={68} className="h-2" />
+              <Progress value={data.soilHealth.moisture} className="h-2" />
             </div>
             
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>Fertility Index</span>
-                <span className="font-semibold">85%</span>
+                <span className="font-semibold">{data.soilHealth.fertility}%</span>
               </div>
-              <Progress value={85} className="h-2" />
+              <Progress value={data.soilHealth.fertility} className="h-2" />
             </div>
             
             <Badge variant="outline" className="text-success border-success">
-              Optimal Conditions
+              {data.soilHealth.conditions}
             </Badge>
           </div>
         </DashboardCard>
@@ -84,25 +103,17 @@ const Dashboard = () => {
           image={cropImage}
         >
           <div className="space-y-3">
-            <div className="p-3 bg-muted rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">Tomatoes</span>
-                <Badge className="bg-success text-success-foreground">96% Match</Badge>
+            {data.cropRecommendations.map((crop, index) => (
+              <div key={index} className="p-3 bg-muted rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{crop.name}</span>
+                  <Badge className="bg-success text-success-foreground">{crop.match}</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {crop.note}
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Perfect season for planting
-              </p>
-            </div>
-            
-            <div className="p-3 bg-muted rounded-lg">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">Corn</span>
-                <Badge variant="secondary">78% Match</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Consider soil preparation
-              </p>
-            </div>
+            ))}
             
             <Button variant="outline" className="w-full">
               View All Recommendations
@@ -122,18 +133,18 @@ const Dashboard = () => {
                 <Droplets className="h-4 w-4 text-secondary" />
                 <span className="font-medium">Next Irrigation</span>
               </div>
-              <p className="text-lg font-bold text-secondary">Tomorrow 6:00 AM</p>
-              <p className="text-sm text-muted-foreground">Zone A - Tomato Field</p>
+              <p className="text-lg font-bold text-secondary">{data.irrigationSchedule.nextIrrigation}</p>
+              <p className="text-sm text-muted-foreground">{data.irrigationSchedule.zone}</p>
             </div>
             
             <div className="text-sm space-y-2">
               <div className="flex justify-between">
                 <span>Water Usage (This Week)</span>
-                <span className="font-semibold">2,450L</span>
+                <span className="font-semibold">{data.irrigationSchedule.waterUsage}</span>
               </div>
               <div className="flex justify-between">
                 <span>Efficiency Score</span>
-                <span className="font-semibold text-success">92%</span>
+                <span className="font-semibold text-success">{data.irrigationSchedule.efficiency}</span>
               </div>
             </div>
             
@@ -152,15 +163,15 @@ const Dashboard = () => {
       >
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-3xl font-bold text-secondary-foreground">1,247</p>
+            <p className="text-3xl font-bold text-secondary-foreground">{data.greenPoints.total}</p>
             <p className="text-secondary-foreground/70">Total Eco-Points</p>
           </div>
           <div className="text-right">
             <Badge className="bg-success text-success-foreground mb-2">
-              +50 Today
+              +{data.greenPoints.today} Today
             </Badge>
             <p className="text-sm text-secondary-foreground/70">
-              Rank #12 in Community
+              Rank #{data.greenPoints.rank} in Community
             </p>
           </div>
         </div>
