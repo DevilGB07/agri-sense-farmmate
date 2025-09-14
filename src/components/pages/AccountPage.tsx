@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { User, Settings, Globe, Bell, Shield, Edit } from "lucide-react";
 import DashboardCard from "../DashboardCard";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,32 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const AccountPage = () => {
+  const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handlePasswordChange = () => {
+    if (newPassword !== confirmPassword) {
+      alert("New passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 8) {
+        alert("Password must be at least 8 characters long.");
+        return;
+    }
+    // In a real app, you would handle the password change logic here
+    alert("Password changed successfully!");
+    setIsChangePasswordDialogOpen(false);
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
   return (
     <div className="p-4 space-y-6">
       <h2 className="text-2xl font-bold text-foreground">Manage Account</h2>
@@ -215,7 +240,7 @@ const AccountPage = () => {
             </div>
             
             <div className="space-y-2">
-              <Button variant="outline" className="w-full" size="sm">
+              <Button variant="outline" className="w-full" size="sm" onClick={() => setIsChangePasswordDialogOpen(true)}>
                 Change Password
               </Button>
               <Button variant="outline" className="w-full" size="sm">
@@ -228,6 +253,44 @@ const AccountPage = () => {
           </div>
         </DashboardCard>
       </div>
+
+      <Dialog open={isChangePasswordDialogOpen} onOpenChange={setIsChangePasswordDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+            <DialogDescription>
+              Enter your current password and new password to update it.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input
+              id="currentPassword"
+              type="password"
+              placeholder="Current Password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <Input
+              id="newPassword"
+              type="password"
+              placeholder="New Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="Confirm New Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsChangePasswordDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handlePasswordChange}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,16 +1,19 @@
-import { Cloud, Droplets, Sprout, Calendar, Award, Thermometer, Wind, Eye } from "lucide-react";
+import { Cloud, Droplets, Sprout, Calendar, Award, Thermometer, Wind, Eye, MapPin } from "lucide-react";
 import DashboardCard from "./DashboardCard";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import weatherImage from "@/assets/weather-dashboard.jpg";
-import soilImage from "@/assets/soil-health.jpg";
-import cropImage from "@/assets/crop-recommendations.jpg";
-import irrigationImage from "@/assets/irrigation-schedule.jpg";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import IrrigationCard from "./IrrigationCard";
 
-const fetchDashboardData = async () => {
-  const response = await fetch("/api/dashboard");
+const fetchDashboardData = async (location, season) => {
+  let url = `/api/dashboard?season=${season}`;
+  if (location) {
+    url += `&lat=${location.latitude}&lon=${location.longitude}`;
+  }
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
@@ -18,9 +21,35 @@ const fetchDashboardData = async () => {
 };
 
 const Dashboard = () => {
-  const { data, isLoading, error } = useQuery({ queryKey: ['dashboardData'], queryFn: fetchDashboardData });
+  const [location, setLocation] = useState(null);
+  const [showAllCrops, setShowAllCrops] = useState(false);
+  const [season, setSeason] = useState('summer');
 
-  if (isLoading) {
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+      },
+      (error) => {
+        console.error("Error getting user location, falling back to default.", error);
+        setLocation(false);
+      }
+    );
+  }, []);
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['dashboardData', location, season],
+    queryFn: () => fetchDashboardData(location, season),
+    enabled: location !== null,
+  });
+
+  useEffect(() => {
+    if (location !== null) {
+      refetch();
+    }
+  }, [season, refetch, location]);
+
+  if (isLoading || location === null) {
     return <div>Loading...</div>;
   }
 
@@ -28,17 +57,26 @@ const Dashboard = () => {
     return <div>Error loading data</div>;
   }
 
+  const displayedCrops = showAllCrops ? data.cropRecommendations : data.cropRecommendations.slice(0, 2);
+
   return (
     <div className="p-4 space-y-6 bg-gradient-earth min-h-screen">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Farm Dashboard</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-foreground">Farm Dashboard</h2>
+        <Select value={season} onValueChange={setSeason}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Season" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="summer">Summer</SelectItem>
+            <SelectItem value="monsoon">Monsoon</SelectItem>
+            <SelectItem value="winter">Winter</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Weather Card */}
-        <DashboardCard
-          title="Weather & AQI"
-          icon={<Cloud className="h-6 w-6 text-primary" />}
-          image={weatherImage}
-        >
+        <DashboardCard title="Weather & AQI" icon={<Cloud className="h-6 w-6 text-primary" />}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -47,7 +85,10 @@ const Dashboard = () => {
               </div>
               <Badge variant="secondary">{data.weather.condition}</Badge>
             </div>
-            
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-secondary" />
+              <span className="text-lg font-semibold">{data.weather.city}</span>
+            </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Droplets className="h-4 w-4 text-primary" />
@@ -67,12 +108,7 @@ const Dashboard = () => {
           </div>
         </DashboardCard>
 
-        {/* Soil Health Card */}
-        <DashboardCard
-          title="Soil Health"
-          icon={<Eye className="h-6 w-6 text-accent" />}
-          image={soilImage}
-        >
+        <DashboardCard title="Soil Health" icon={<Eye className="h-6 w-6 text-accent" />}>
           <div className="space-y-4">
             <div>
               <div className="flex justify-between text-sm mb-2">
@@ -81,7 +117,6 @@ const Dashboard = () => {
               </div>
               <Progress value={data.soilHealth.moisture} className="h-2" />
             </div>
-            
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span>Fertility Index</span>
@@ -89,93 +124,34 @@ const Dashboard = () => {
               </div>
               <Progress value={data.soilHealth.fertility} className="h-2" />
             </div>
-            
             <Badge variant="outline" className="text-success border-success">
               {data.soilHealth.conditions}
             </Badge>
           </div>
         </DashboardCard>
 
-        {/* Crop Recommendations */}
-        <DashboardCard
-          title="AI Crop Recommendations"
-          icon={<Sprout className="h-6 w-6 text-success" />}
-          image={cropImage}
-        >
+        <DashboardCard title="AI Crop Recommendations" icon={<Sprout className="h-6 w-6 text-success" />} className="md:col-span-2">
           <div className="space-y-3">
-            {data.cropRecommendations.map((crop, index) => (
+            {displayedCrops.map((crop, index) => (
               <div key={index} className="p-3 bg-muted rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">{crop.name}</span>
                   <Badge className="bg-success text-success-foreground">{crop.match}</Badge>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {crop.note}
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">{crop.note}</p>
               </div>
             ))}
-            
-            <Button variant="outline" className="w-full">
-              View All Recommendations
+            <Button variant="outline" className="w-full" onClick={() => setShowAllCrops(!showAllCrops)}>
+              {showAllCrops ? "View Less" : "View All Recommendations"}
             </Button>
           </div>
         </DashboardCard>
 
-        {/* Irrigation Schedule */}
-        <DashboardCard
-          title="Irrigation Schedule"
-          icon={<Calendar className="h-6 w-6 text-primary" />}
-          image={irrigationImage}
-        >
-          <div className="space-y-4">
-            <div className="p-3 bg-secondary/10 border border-secondary rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Droplets className="h-4 w-4 text-secondary" />
-                <span className="font-medium">Next Irrigation</span>
-              </div>
-              <p className="text-lg font-bold text-secondary">{data.irrigationSchedule.nextIrrigation}</p>
-              <p className="text-sm text-muted-foreground">{data.irrigationSchedule.zone}</p>
-            </div>
-            
-            <div className="text-sm space-y-2">
-              <div className="flex justify-between">
-                <span>Water Usage (This Week)</span>
-                <span className="font-semibold">{data.irrigationSchedule.waterUsage}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Efficiency Score</span>
-                <span className="font-semibold text-success">{data.irrigationSchedule.efficiency}</span>
-              </div>
-            </div>
-            
-            <Button variant="secondary" className="w-full">
-              Adjust Schedule
-            </Button>
-          </div>
-        </DashboardCard>
-      </div>
-
-      {/* Green Points Section */}
-      <DashboardCard
-        title="Green Points"
-        icon={<Award className="h-6 w-6 text-secondary" />}
-        className="bg-gradient-secondary"
-      >
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-3xl font-bold text-secondary-foreground">{data.greenPoints.total}</p>
-            <p className="text-secondary-foreground/70">Total Eco-Points</p>
-          </div>
-          <div className="text-right">
-            <Badge className="bg-success text-success-foreground mb-2">
-              +{data.greenPoints.today} Today
-            </Badge>
-            <p className="text-sm text-secondary-foreground/70">
-              Rank #{data.greenPoints.rank} in Community
-            </p>
-          </div>
+        <div className="md:col-span-2">
+          <IrrigationCard />
         </div>
-      </DashboardCard>
+
+      </div>
     </div>
   );
 };
