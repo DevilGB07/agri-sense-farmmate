@@ -7,25 +7,29 @@ interface DashboardCardProps {
   children: ReactNode;
   className?: string;
   image?: string;
+  action?: ReactNode;
 }
 
-const DashboardCard = ({ title, icon, children, className = "", image }: DashboardCardProps) => {
+const DashboardCard = ({ title, icon, children, className = "", image, action }: DashboardCardProps) => {
   return (
     <Card className={`shadow-medium hover:shadow-strong transition-shadow duration-200 ${className}`}>
       {image && (
         <div className="h-32 overflow-hidden rounded-t-lg">
-          <img 
-            src={image} 
+          <img
+            src={image}
             alt={title}
             className="w-full h-full object-cover"
           />
         </div>
       )}
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          {icon}
-          <span>{title}</span>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            {icon}
+            <span>{title}</span>
+          </CardTitle>
+          {action && <div>{action}</div>}
+        </div>
       </CardHeader>
       <CardContent>
         {children}

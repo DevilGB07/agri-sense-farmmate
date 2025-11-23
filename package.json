@@ -49,6 +49,7 @@
     "embla-carousel-react": "^8.6.0",
     "express": "^5.1.0",
     "firebase": "^12.2.1",
+    "framer-motion": "^12.23.24",
     "input-otp": "^1.4.2",
     "kill-port": "^2.0.1",
     "lucide-react": "^0.462.0",
@@ -86,7 +87,8 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
-    "vite": "^5.4.19"
+    "vite": "^5.4.19",
+    "vite-plugin-pwa": "^1.1.0"
   },
   "description": "npm run dev# Welcome to your Lovable project",
   "main": "eslint.config.js",

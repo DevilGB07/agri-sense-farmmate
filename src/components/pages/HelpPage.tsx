@@ -6,36 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-
-const allFaqs = [
-  {
-    question: "How do I add a new crop to monitor?",
-    answer: "From the Dashboard, navigate to the 'My Crops' section and click the 'Add Crop' button. You can then select your crop type, planting date, and other relevant details.",
-    category: "Getting Started"
-  },
-  {
-    question: "Why is my soil moisture reading inaccurate?",
-    answer: "Inaccurate readings can be caused by improper sensor placement or calibration issues. Ensure the sensor is inserted to the correct depth and recalibrate it through the device settings. Contact support if the issue persists.",
-    category: "Troubleshooting"
-  },
-  {
-    question: "How to interpret weather predictions?",
-    answer: "Our weather module provides forecasts for temperature, humidity, rainfall, and wind speed. Pay attention to the hourly and daily trends to plan your farming activities like irrigation and pesticide application.",
-    category: "Weather"
-  },
-  {
-    question: "Setting up irrigation schedules",
-    answer: "In the 'Irrigation' tab, you can create custom schedules based on crop type and soil moisture levels. The system can also suggest optimal watering times based on weather data to conserve water.",
-    category: "Irrigation"
-  },
-  {
-    question: "How are Green Points calculated?",
-    answer: "Green Points are awarded for sustainable farming practices, such as conserving water, using organic fertilizers, and participating in community discussions. The more sustainable your actions, the more points you earn.",
-    category: "Community"
-  }
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HelpPage = () => {
+  const { t } = useLanguage();
   const [isFaqDialogOpen, setIsFaqDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditingContact, setIsEditingContact] = useState(false);
@@ -45,7 +19,35 @@ const HelpPage = () => {
   });
   const [tempContactInfo, setTempContactInfo] = useState(contactInfo);
 
-  const filteredFaqs = allFaqs.filter(faq => 
+  const allFaqs = [
+    {
+      question: t('faq1_q'),
+      answer: t('faq1_a'),
+      category: "Getting Started"
+    },
+    {
+      question: t('faq2_q'),
+      answer: t('faq2_a'),
+      category: "Troubleshooting"
+    },
+    {
+      question: t('faq3_q'),
+      answer: t('faq3_a'),
+      category: "Weather"
+    },
+    {
+      question: t('faq4_q'),
+      answer: t('faq4_a'),
+      category: "Irrigation"
+    },
+    {
+      question: t('faq5_q'),
+      answer: t('faq5_a'),
+      category: "Community"
+    }
+  ];
+
+  const filteredFaqs = allFaqs.filter(faq =>
     faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
     faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -62,17 +64,17 @@ const HelpPage = () => {
 
   return (
     <div className="p-4 space-y-6">
-      <h2 className="text-2xl font-bold text-foreground">Help Center</h2>
-      
+      <h2 className="text-2xl font-bold text-foreground">{t('helpCenter')}</h2>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="md:col-span-2">
           <DashboardCard
-            title="Search Help Articles"
+            title={t('searchHelp')}
             icon={<Search className="h-6 w-6 text-primary" />}
           >
             <div className="flex gap-2">
-              <Input 
-                placeholder="Search for help articles, guides, and tutorials..." 
+              <Input
+                placeholder={t('searchPlaceholder')}
                 className="flex-1"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -80,13 +82,13 @@ const HelpPage = () => {
               <Button>Search</Button>
             </div>
             <div className="mt-4 text-sm text-muted-foreground">
-              Popular searches: <span className="text-primary cursor-pointer">irrigation setup</span>, <span className="text-primary cursor-pointer">crop diseases</span>, <span className="text-primary cursor-pointer">soil testing</span>
+              {t('popularSearches')}: <span className="text-primary cursor-pointer">irrigation setup</span>, <span className="text-primary cursor-pointer">crop diseases</span>, <span className="text-primary cursor-pointer">soil testing</span>
             </div>
           </DashboardCard>
         </div>
 
         <DashboardCard
-          title="Frequently Asked Questions"
+          title={t('faq')}
           icon={<HelpCircle className="h-6 w-6 text-secondary" />}
         >
           <Accordion type="single" collapsible className="w-full">
@@ -100,55 +102,55 @@ const HelpPage = () => {
             ))}
           </Accordion>
           <Button variant="secondary" className="w-full mt-4" onClick={() => setIsFaqDialogOpen(true)}>
-            View All FAQs
+            {t('viewAllFaq')}
           </Button>
         </DashboardCard>
 
         <DashboardCard
-          title="Learning Resources"
+          title={t('learningResources')}
           icon={<Book className="h-6 w-6 text-success" />}
         >
           <div className="space-y-3">
             <div className="p-3 bg-gradient-secondary rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Video className="h-5 w-5 text-secondary-foreground" />
-                <span className="font-medium text-secondary-foreground">Video Tutorials</span>
+                <span className="font-medium text-secondary-foreground">{t('videoTutorials')}</span>
               </div>
               <p className="text-sm text-secondary-foreground/80 mb-3">
-                Learn with step-by-step guides
+                {t('learnWithGuides')}
               </p>
               <Button variant="outline" size="sm" className="text-secondary-foreground border-secondary-foreground hover:bg-secondary-foreground hover:text-secondary">
-                Watch Now
+                {t('watchNow')}
               </Button>
             </div>
           </div>
         </DashboardCard>
 
         <DashboardCard
-          title="Quick Help"
+          title={t('quickHelp')}
           icon={<MessageCircle className="h-6 w-6 text-primary" />}
         >
           <div className="space-y-4">
             <div className="p-4 bg-primary/10 border border-primary rounded-lg">
-              <h4 className="font-medium text-primary mb-2">Voice Assistant</h4>
-              <p className="text-sm mb-3">Ask questions in your local language</p>
+              <h4 className="font-medium text-primary mb-2">{t('voiceAssistant')}</h4>
+              <p className="text-sm mb-3">{t('askInLocal')}</p>
               <Button className="w-full" variant="secondary">
-                🎤 Start Voice Chat
+                🎤 {t('startVoiceChat')}
               </Button>
             </div>
-            
+
             <div className="p-4 bg-success/10 border border-success rounded-lg">
-              <h4 className="font-medium text-success mb-2">Live Chat Support</h4>
-              <p className="text-sm mb-3">Get instant help from our experts</p>
+              <h4 className="font-medium text-success mb-2">{t('liveChat')}</h4>
+              <p className="text-sm mb-3">{t('getInstantHelp')}</p>
               <Button className="w-full" variant="outline">
-                💬 Start Chat
+                💬 {t('startChat')}
               </Button>
             </div>
           </div>
         </DashboardCard>
 
         <DashboardCard
-          title="Contact Support"
+          title={t('contactSupport')}
           icon={<Phone className="h-6 w-6 text-accent" />}
           action={
             !isEditingContact ? (
@@ -171,32 +173,32 @@ const HelpPage = () => {
             <div className="p-3 border rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="font-medium">Helpline</span>
+                <span className="font-medium">{t('helpline')}</span>
               </div>
               {isEditingContact ? (
-                <Input 
+                <Input
                   value={tempContactInfo.helpline}
-                  onChange={(e) => setTempContactInfo({...tempContactInfo, helpline: e.target.value})}
+                  onChange={(e) => setTempContactInfo({ ...tempContactInfo, helpline: e.target.value })}
                 />
               ) : (
                 <p className="text-lg font-bold text-primary">{contactInfo.helpline}</p>
               )}
-              <p className="text-sm text-muted-foreground">Available 24/7</p>
+              <p className="text-sm text-muted-foreground">{t('available247')}</p>
             </div>
             <div className="p-3 border rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="font-medium">Email Support</span>
+                <span className="font-medium">{t('emailSupport')}</span>
               </div>
               {isEditingContact ? (
-                <Input 
+                <Input
                   value={tempContactInfo.email}
-                  onChange={(e) => setTempContactInfo({...tempContactInfo, email: e.target.value})}
+                  onChange={(e) => setTempContactInfo({ ...tempContactInfo, email: e.target.value })}
                 />
               ) : (
                 <p className="text-sm font-medium">{contactInfo.email}</p>
               )}
-              <p className="text-sm text-muted-foreground">Response in 2-4 hours</p>
+              <p className="text-sm text-muted-foreground">{t('responseTime')}</p>
             </div>
           </div>
         </DashboardCard>
@@ -205,7 +207,7 @@ const HelpPage = () => {
       <Dialog open={isFaqDialogOpen} onOpenChange={setIsFaqDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>All Frequently Asked Questions</DialogTitle>
+            <DialogTitle>{t('allFaq')}</DialogTitle>
           </DialogHeader>
           <div className="py-4 max-h-[70vh] overflow-y-auto">
             <Accordion type="single" collapsible className="w-full">

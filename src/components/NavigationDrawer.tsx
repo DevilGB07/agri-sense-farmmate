@@ -1,6 +1,7 @@
-import { X, Home, Sprout, Users, HelpCircle, User, Settings, LogOut } from "lucide-react";
+import { X, Home, Sprout, Users, HelpCircle, User, Settings, LogOut, TrendingUp, Scan } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NavigationDrawerProps {
   isOpen: boolean;
@@ -10,13 +11,17 @@ interface NavigationDrawerProps {
 }
 
 const NavigationDrawer = ({ isOpen, onClose, onNavigate, currentPage }: NavigationDrawerProps) => {
+  const { t } = useLanguage();
+
   const menuItems = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'crops', label: 'Crop & Irrigation', icon: Sprout },
-    { id: 'community', label: 'Community Hub', icon: Users },
-    { id: 'help', label: 'Help Center', icon: HelpCircle },
-    { id: 'account', label: 'Manage Account', icon: User },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'home', label: t('navHome'), icon: Home },
+    { id: 'crops', label: t('navCrops'), icon: Sprout },
+    { id: 'disease-detection', label: t('navDisease'), icon: Scan },
+    { id: 'community', label: t('navCommunity'), icon: Users },
+    { id: 'market', label: t('navMarket'), icon: TrendingUp },
+    { id: 'help', label: t('navHelp'), icon: HelpCircle },
+    { id: 'account', label: t('navAccount'), icon: User },
+    { id: 'settings', label: t('navSettings'), icon: Settings },
   ];
 
   if (!isOpen) return null;
@@ -24,17 +29,17 @@ const NavigationDrawer = ({ isOpen, onClose, onNavigate, currentPage }: Navigati
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 z-40 bg-black/50"
         onClick={onClose}
       />
-      
+
       {/* Drawer */}
       <div className="fixed left-0 top-0 z-50 h-full w-80 bg-card shadow-strong transition-transform">
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 bg-gradient-primary">
-            <h2 className="text-lg font-semibold text-primary-foreground">Menu</h2>
+            <h2 className="text-lg font-semibold text-primary-foreground">{t('menu')}</h2>
             <Button
               variant="ghost"
               size="icon"
@@ -79,7 +84,7 @@ const NavigationDrawer = ({ isOpen, onClose, onNavigate, currentPage }: Navigati
               }}
             >
               <LogOut className="mr-3 h-5 w-5" />
-              Logout
+              {t('navLogout')}
             </Button>
           </div>
         </div>
