@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriEnviroSense AI - Smart Farming Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>AgriEnviroSense AI</h1>
+        <p>Smart Farming Dashboard</p>
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="#" data-target="dashboard" class="active-link">Dashboard</a></li>
+                <li><a href="#" data-target="crops">Crops</a></li>
+                <li><a href="#" data-target="market">Market</a></li>
+                <li><a href="#" data-target="disease">Disease Detection</a></li>
+                <li><a href="#" data-target="hardware">Hardware Sync</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Dashboard Page -->
+        <section id="dashboard" class="page active">
+            <h2>Dashboard</h2>
+            <div class="card border-green">
+                <h3>Weather Monitoring</h3>
+                <p>Current Temperature: 24°C, Sunny. Ideal condition for outdoor farm tasks.</p>
+            </div>
+            <div class="card border-green">
+                <h3>Smart Recommendations</h3>
+                <p><strong>Today's Action:</strong> Apply organic fertilizer to Zone A tomatoes.</p>
+                <p><strong>Weather Alert:</strong> Rain expected tomorrow - delay irrigation.</p>
+            </div>
+        </section>
+
+        <!-- Crops Page -->
+        <section id="crops" class="page">
+            <h2>Crop & Irrigation Recommendations</h2>
+            <div class="dashboard-grid">
+                <div class="card border-green">
+                    <h3>Current Season Crops</h3>
+                    <div id="crops-container"></div>
+                </div>
+                <div class="card border-blue">
+                    <h3>Irrigation Zones</h3>
+                    <div id="irrigation-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Page -->
+        <section id="market" class="page">
+            <h2>Market Prices (Indian Mandis)</h2>
+            <div class="controls">
+                <input type="text" id="market-search" placeholder="Search crops (e.g. Tomato)...">
+                <select id="market-filter">
+                    <option value="all">All Markets</option>
+                    <option value="Nashik">Nashik</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Gujarat">Gujarat</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table class="market-table">
+                    <thead>
+                        <tr>
+                            <th>Crop</th>
+                            <th>Market</th>
+                            <th>Price (₹)</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody id="market-tbody">
+                        <!-- JS renders rows here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Disease Detection Page -->
+        <section id="disease" class="page">
+            <h2>Crop Disease Detection</h2>
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Upload Image</h3>
+                    <input type="file" id="crop-image" accept="image/*">
+                    <img id="image-preview" src="" alt="Image Preview" style="display:none; max-height:250px; margin: 15px auto;">
+                    <button id="analyze-btn" disabled>Analyze Crop</button>
+                    <p id="loading-text" style="display:none; color: #666; margin-top: 10px;">Analyzing... please wait 3 seconds.</p>
+                </div>
+                
+                <div id="analysis-result" style="display:none;" class="card border-green">
+                    <h3>Analysis Result</h3>
+                    <div class="result-header">
+                        <h4 id="result-disease" style="color: #d32f2f; font-size: 1.2rem;"></h4>
+                        <div style="text-align: right;">
+                            <span id="result-confidence" style="font-size: 1.5rem; color: #2e7d32; font-weight: bold;"></span>
+                            <p style="font-size: 0.8rem; color: #666;">Confidence</p>
+                        </div>
+                    </div>
+                    <p>Severity: <strong id="result-severity"></strong></p>
+                    <div style="margin-top: 15px;">
+                        <h4>Recommended Treatment:</h4>
+                        <ul id="result-treatment" style="margin-left: 20px; color: #555;"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hardware Sync Page -->
+        <section id="hardware" class="page">
+            <h2>Hardware Sync (Arduino)</h2>
+            <div style="margin-bottom: 20px;">
+                <button id="connect-btn" style="padding: 10px 20px; font-size: 16px; background-color: #2e7d32; color: white; border: none; border-radius: 5px; cursor: pointer;">Connect Arduino via USB</button>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Live Data -->
+                <div class="card border-green">
+                    <h3>Live Sensor Data</h3>
+                    <div id="sensor-container" style="text-align: center; padding: 20px 0;">
+                        <p id="sensor-status" style="color: #666;">Waiting for data from Arduino...</p>
+                        <div id="sensor-readings" style="display: none; justify-content: center; gap: 40px; margin-top: 15px;">
+                            <div>
+                                <p style="font-size: 0.9rem; color: #555;">Temperature</p>
+                                <h3 id="live-temp" style="font-size: 2.5rem; color: #d84315;">--°C</h3>
+                            </div>
+                            <div>
+                                <p style="font-size: 0.9rem; color: #555;">Humidity</p>
+                                <h3 id="live-hum" style="font-size: 2.5rem; color: #0277bd;">--%</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="raw-data-console" style="margin-top: 20px; background: #f5f5f5; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 0.85rem;">
+                        <strong>Raw Arduino Stream:</strong>
+                        <div id="raw-log-container" style="color: #666; margin-top: 5px; min-height: 80px;"></div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="card border-blue">
+                    <h3>Recommendations Based on Data</h3>
+                    <div id="rec-container" style="padding: 10px 0;">
+                        <p id="rec-status" style="color: #666; text-align: center;">Connect device to see recommendations.</p>
+                        <div id="rec-content" style="display: none;">
+                            <h4 style="color: #2e7d32; margin-bottom: 10px;">Suitable Crops</h4>
+                            <div id="suitable-crops" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;"></div>
+                            
+                            <h4 style="color: #d32f2f; margin-bottom: 10px;">Not Recommended</h4>
+                            <div id="unsuitable-crops" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 AgriEnviroSense AI. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
