@@ -22,6 +22,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'navAccount': 'Manage Account',
     'navSettings': 'Settings',
     'navLogout': 'Logout',
+    'navHardware': 'Hardware Sync',
     'menu': 'Menu',
 
     // Dashboard
@@ -166,6 +167,19 @@ export const translations: Record<Language, Record<string, string>> = {
     'trend': 'Trend',
     'noCropsFound': 'No crops found matching your search.',
 
+    // Hardware
+    'hardwareSync': 'Hardware Sync',
+    'connectArduino': 'Connect Arduino via USB',
+    'disconnectArduino': 'Disconnect',
+    'liveSensorData': 'Live Sensor Data',
+    'tempReading': 'Temperature',
+    'humidityReading': 'Humidity',
+    'waitingForData': 'Waiting for data from Arduino...',
+    'recommendationsBasedOnData': 'Recommendations Based on Sensor Data',
+    'suitableCrops': 'Suitable Crops',
+    'unsuitableCrops': 'Not Recommended',
+    'deviceNotConnected': 'Device not connected. Click Connect to start reading data.',
+
     // Help Page
     'helpCenter': 'Help Center',
     'searchHelp': 'Search Help Articles',
@@ -212,6 +226,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'navAccount': 'खाता प्रबंधन',
     'navSettings': 'सेटिंग्स',
     'navLogout': 'लॉग आउट',
+    'navHardware': 'हार्डवेयर सिंक',
     'menu': 'मेन्यू',
 
     // Dashboard
@@ -390,6 +405,19 @@ export const translations: Record<Language, Record<string, string>> = {
     'change': 'परिवर्तन',
     'trend': 'रुझान',
     'noCropsFound': 'आपकी खोज से मेल खाने वाली कोई फसल नहीं मिली।',
+
+    // Hardware
+    'hardwareSync': 'हार्डवेयर सिंक',
+    'connectArduino': 'USB के माध्यम से Arduino को कनेक्ट करें',
+    'disconnectArduino': 'डिस्कनेक्ट करें',
+    'liveSensorData': 'लाइव सेंसर डेटा',
+    'tempReading': 'तापमान',
+    'humidityReading': 'आर्द्रता',
+    'waitingForData': 'Arduino से डेटा की प्रतीक्षा है...',
+    'recommendationsBasedOnData': 'सेंसर डेटा के आधार पर सिफारिशें',
+    'suitableCrops': 'उपयुक्त फसलें',
+    'unsuitableCrops': 'अनुशंसित नहीं',
+    'deviceNotConnected': 'डिवाइस कनेक्ट नहीं है। डेटा पढ़ने के लिए कनेक्ट पर क्लिक करें।',
   }
 };
 
