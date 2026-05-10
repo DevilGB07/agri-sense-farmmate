@@ -1,4 +1,4 @@
-import { X, Home, Sprout, Users, HelpCircle, User, Settings, LogOut, TrendingUp, Scan } from "lucide-react";
+import { X, Home, Sprout, Users, HelpCircle, User, Settings, LogOut, TrendingUp, Scan, Usb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -17,6 +17,7 @@ const NavigationDrawer = ({ isOpen, onClose, onNavigate, currentPage }: Navigati
     { id: 'home', label: t('navHome'), icon: Home },
     { id: 'crops', label: t('navCrops'), icon: Sprout },
     { id: 'disease-detection', label: t('navDisease'), icon: Scan },
+    { id: 'hardware', label: t('navHardware'), icon: Usb },
     { id: 'community', label: t('navCommunity'), icon: Users },
     { id: 'market', label: t('navMarket'), icon: TrendingUp },
     { id: 'help', label: t('navHelp'), icon: HelpCircle },

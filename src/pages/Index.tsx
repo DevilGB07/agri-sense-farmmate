@@ -10,6 +10,7 @@ import AccountPage from "@/components/pages/AccountPage";
 import MarketPage from "@/components/pages/MarketPage";
 import DiseaseDetectionPage from "@/components/pages/DiseaseDetectionPage";
 import SettingsPage from "@/components/pages/SettingsPage";
+import HardwareConnectPage from "@/components/pages/HardwareConnectPage";
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,6 +32,8 @@ const Index = () => {
         return <DiseaseDetectionPage />;
       case 'settings':
         return <SettingsPage />;
+      case 'hardware':
+        return <HardwareConnectPage />;
       default:
         return <Dashboard />;
     }
